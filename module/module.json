@@ -338,7 +338,7 @@
     {
       "name": "make_sound_effect",
       "title": "Criar efeito sonoro",
-      "description": "Gera um efeito sonoro para jogos ou vídeos e salva em WAV (sem path, em MúsicaPiphin Som). Pode também colocar na música.",
+      "description": "Gera um efeito sonoro para jogos ou vídeos e salva em WAV (sem path, em Música\\Piphin Som). Pode também colocar na música.",
       "input": {
         "type": "object",
         "properties": {
@@ -435,7 +435,7 @@
     {
       "name": "export_audio",
       "title": "Exportar música",
-      "description": "Exporta a música mixada para MP3, WAV, M4A ou OGG. Sem path, salva em MúsicaPiphin Som.",
+      "description": "Exporta a música mixada para MP3, WAV, M4A ou OGG. Sem path, salva em Música\\Piphin Som.",
       "input": {
         "type": "object",
         "properties": {
