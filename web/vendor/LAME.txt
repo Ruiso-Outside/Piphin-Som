@@ -1,0 +1,1 @@
+O codificador MP3 usa o LAME 3.100 (https://lame.sourceforge.io), licença LGPL.

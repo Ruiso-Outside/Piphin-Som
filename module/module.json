@@ -1,0 +1,475 @@
+{
+  "id": "som",
+  "name": "Piphin Som",
+  "version": "0.0.0",
+  "description": "Estúdio de música e efeitos sonoros: instrumentos, bateria, piano roll, gravação, efeitos e exportação MP3/WAV.",
+  "main": "backend.js",
+  "ui": "web/index.html",
+  "icon": "icons/som.png",
+  "accent": "#22c55e",
+  "minHub": "1.4.0",
+  "reservedKeys": [
+    "ctrl+1",
+    "ctrl+2"
+  ],
+  "tools": [
+    {
+      "name": "project_info",
+      "title": "Ver a música",
+      "readOnly": true,
+      "description": "Mostra a música aberta no Piphin Som: andamento (BPM), compasso, tamanho em compassos e as faixas (id, instrumento, volume) com os clipes de cada uma.",
+      "input": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "new_song",
+      "title": "Começar música nova",
+      "description": "Começa uma música vazia (a anterior fica no desfazer). Use antes de compor algo do zero.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "bpm": {
+            "type": "number",
+            "description": "Andamento, 40 a 240 (padrão 110)"
+          },
+          "bars": {
+            "type": "number",
+            "description": "Tamanho em compassos (padrão 16)"
+          },
+          "beats_per_bar": {
+            "type": "number",
+            "description": "Tempos por compasso (padrão 4)"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_track",
+      "title": "Adicionar faixa",
+      "description": "Adiciona uma faixa: instrumento (para notas e acordes), bateria (para batidas) ou áudio.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "instrument",
+              "drums",
+              "audio"
+            ]
+          },
+          "instrument": {
+            "type": "string",
+            "enum": [
+              "piano",
+              "piano-eletrico",
+              "orgao",
+              "cordas",
+              "pad",
+              "baixo",
+              "baixo-808",
+              "lead",
+              "pluck",
+              "sino",
+              "chiptune",
+              "flauta",
+              "brass"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "kit": {
+            "type": "string",
+            "enum": [
+              "808",
+              "acustico",
+              "lofi",
+              "eletronico"
+            ],
+            "description": "Kit da bateria"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      }
+    },
+    {
+      "name": "edit_track",
+      "title": "Ajustar faixa",
+      "description": "Muda volume, panorâmico, instrumento ou efeitos de uma faixa.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "track": {
+            "type": "string",
+            "description": "id da faixa (veja project_info)"
+          },
+          "volume": {
+            "type": "number",
+            "description": "0 a 150 (%)"
+          },
+          "pan": {
+            "type": "number",
+            "description": "-100 (esquerda) a 100 (direita)"
+          },
+          "mute": {
+            "type": "boolean"
+          },
+          "instrument": {
+            "type": "string",
+            "enum": [
+              "piano",
+              "piano-eletrico",
+              "orgao",
+              "cordas",
+              "pad",
+              "baixo",
+              "baixo-808",
+              "lead",
+              "pluck",
+              "sino",
+              "chiptune",
+              "flauta",
+              "brass"
+            ]
+          },
+          "reverb": {
+            "type": "number",
+            "description": "0 a 100"
+          },
+          "delay": {
+            "type": "number",
+            "description": "0 a 100"
+          },
+          "distortion": {
+            "type": "number",
+            "description": "0 a 100"
+          },
+          "lowpass": {
+            "type": "number",
+            "description": "frequência de corte em Hz (20000 = desligado)"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "track"
+        ]
+      }
+    },
+    {
+      "name": "add_notes",
+      "title": "Escrever notas",
+      "description": "Escreve notas numa faixa de instrumento. Tempos em tempos (beats) a partir do começo da música: 0 = início, 4 = começo do 2º compasso em 4/4. Notas como C4, D#4, Bb3 (C4 = dó central) ou número MIDI.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "note": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "start": {
+                  "type": "number",
+                  "description": "tempo de início (beats)"
+                },
+                "length": {
+                  "type": "number",
+                  "description": "duração (beats)"
+                },
+                "velocity": {
+                  "type": "number",
+                  "description": "1 a 127 (padrão 96)"
+                }
+              },
+              "required": [
+                "note",
+                "start",
+                "length"
+              ]
+            }
+          }
+        },
+        "required": [
+          "track",
+          "notes"
+        ]
+      }
+    },
+    {
+      "name": "add_chords",
+      "title": "Escrever acordes",
+      "description": "Escreve uma sequência de acordes (ex.: [\"Am\", \"F\", \"C\", \"G\"]) numa faixa de instrumento, um acorde por bloco. Aceita C, Cm, C7, Cmaj7, Cm7, Csus4, Cdim, Caug, C/E...",
+      "input": {
+        "type": "object",
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "chords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "start_bar": {
+            "type": "number",
+            "description": "compasso inicial (1 = primeiro)"
+          },
+          "bars_per_chord": {
+            "type": "number",
+            "description": "compassos por acorde (padrão 1)"
+          },
+          "octave": {
+            "type": "number",
+            "description": "oitava (padrão 4)"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "bloco",
+              "arpejo",
+              "quebrado",
+              "ritmado",
+              "baixo"
+            ]
+          },
+          "repeat": {
+            "type": "number",
+            "description": "quantas vezes repetir a sequência (padrão 1)"
+          }
+        },
+        "required": [
+          "track",
+          "chords"
+        ]
+      }
+    },
+    {
+      "name": "add_drums",
+      "title": "Escrever batida",
+      "description": "Escreve uma batida numa faixa de bateria. Use style (pronta) ou pattern com 16 passos por compasso, 'x' = forte, 'o' = fraco, '.' = nada. Peças: kick, snare, clap, hihat, openhat, tom, rim, crash, shaker.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "pop",
+              "rock",
+              "hiphop",
+              "trap",
+              "house",
+              "lofi",
+              "funk",
+              "reggaeton",
+              "disco",
+              "bossa"
+            ]
+          },
+          "pattern": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "start_bar": {
+            "type": "number",
+            "description": "compasso inicial (padrão 1)"
+          },
+          "bars": {
+            "type": "number",
+            "description": "quantos compassos (padrão 4)"
+          },
+          "fill": {
+            "type": "boolean",
+            "description": "virada no último compasso"
+          }
+        },
+        "required": [
+          "track"
+        ]
+      }
+    },
+    {
+      "name": "clear_clip",
+      "title": "Apagar trecho",
+      "description": "Apaga as notas, batidas ou áudios de uma faixa num trecho (ou a faixa inteira).",
+      "input": {
+        "type": "object",
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "start_bar": {
+            "type": "number",
+            "description": "compasso inicial"
+          },
+          "bars": {
+            "type": "number",
+            "description": "quantos compassos"
+          }
+        },
+        "required": [
+          "track"
+        ]
+      }
+    },
+    {
+      "name": "make_sound_effect",
+      "title": "Criar efeito sonoro",
+      "description": "Gera um efeito sonoro para jogos ou vídeos e salva em WAV (sem path, em MúsicaPiphin Som). Pode também colocar na música.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "preset": {
+            "type": "string",
+            "enum": [
+              "moeda",
+              "pulo",
+              "laser",
+              "explosao",
+              "power-up",
+              "dano",
+              "blip",
+              "clique",
+              "selecao",
+              "erro",
+              "sucesso",
+              "sirene",
+              "passo",
+              "tiro",
+              "magia",
+              "vento",
+              "chuva",
+              "notificacao",
+              "teleporte",
+              "zumbido"
+            ]
+          },
+          "variation": {
+            "type": "number",
+            "description": "0 a 100: quanto variar a partir do modelo (padrão 30)"
+          },
+          "pitch": {
+            "type": "number",
+            "description": "-12 a 12 semitons"
+          },
+          "length": {
+            "type": "number",
+            "description": "multiplicador da duração, 0.5 a 3"
+          },
+          "path": {
+            "type": "string"
+          },
+          "add_to_song": {
+            "type": "boolean"
+          },
+          "start_bar": {
+            "type": "number",
+            "description": "compasso, se add_to_song"
+          }
+        },
+        "required": [
+          "preset"
+        ]
+      }
+    },
+    {
+      "name": "import_audio",
+      "title": "Importar áudio",
+      "description": "Importa um arquivo de áudio (WAV, MP3, OGG, M4A, FLAC) numa faixa de áudio.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "start_bar": {
+            "type": "number",
+            "description": "compasso (padrão 1)"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "play",
+      "title": "Tocar ou parar",
+      "description": "Toca a música no Piphin Som (ou para, se já estiver tocando).",
+      "input": {
+        "type": "object",
+        "properties": {
+          "from_bar": {
+            "type": "number",
+            "description": "compasso"
+          },
+          "stop": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "export_audio",
+      "title": "Exportar música",
+      "description": "Exporta a música mixada para MP3, WAV, M4A ou OGG. Sem path, salva em MúsicaPiphin Som.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "mp3",
+              "wav",
+              "m4a",
+              "ogg"
+            ]
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "undo",
+      "title": "Desfazer",
+      "description": "Desfaz a última alteração no Piphin Som.",
+      "input": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

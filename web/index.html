@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: piphin:; media-src 'self' blob: mediastream:; connect-src 'self' blob: data:; style-src 'self' 'unsafe-inline' piphin:; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data: piphin:">
+  <title>Piphin Som</title>
+  <link rel="stylesheet" href="piphin://ui/kit.css">
+  <link rel="stylesheet" href="icons.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="in-hub">
+  <header class="topbar">
+    <div class="brand"><i class="i i-music"></i>Som</div>
+    <nav class="menus" id="menus"></nav>
+    <div class="seg mini tabs" id="tabs"><button data-tab="music" class="on"><i class="i i-music-4"></i>Música</button><button data-tab="sfx"><i class="i i-sparkles"></i>Efeitos sonoros</button></div>
+    <div class="grow"></div>
+    <div class="transport" id="transport">
+      <button class="tbtn rec" data-cmd="record" id="recBtn" title="Gravar (Shift+R): microfone na faixa de áudio, ou o teclado na faixa de instrumento"><i class="i i-circle"></i></button>
+      <button class="tbtn" data-cmd="stop" title="Parar e voltar ao início"><i class="i i-square"></i></button>
+      <button class="tbtn play" data-cmd="play" id="playBtn" title="Tocar / pausar (Espaço)"><i class="i i-play"></i></button>
+      <button class="tbtn" data-cmd="loop" id="loopBtn" title="Repetir o trecho marcado na régua (L) · Shift + arrastar na régua marca o trecho"><i class="i i-repeat"></i></button>
+      <button class="tbtn" data-cmd="metronome" id="metroBtn" title="Metrônomo (Shift+M)"><i class="i i-timer"></i></button>
+      <div class="pos"><b id="posBar">1.1.1</b><span id="posTime">0:00.0</span></div>
+      <label class="bpm" title="Andamento (batidas por minuto)"><input type="number" id="bpm" min="40" max="240" value="110"><span>BPM</span></label>
+      <canvas id="vu" width="90" height="26" title="Volume de saída"></canvas>
+    </div>
+    <button class="btn sm icon ghost" data-cmd="undo" title="Desfazer (Ctrl+Z)"><i class="i i-undo-2"></i></button>
+    <button class="btn sm icon ghost" data-cmd="redo" title="Refazer (Ctrl+Shift+Z)"><i class="i i-redo-2"></i></button>
+    <button class="btn sm primary" data-cmd="export"><i class="i i-download"></i>Exportar</button>
+  </header>
+
+  <div class="view" id="musicView">
+    <div class="col">
+      <section class="arrange">
+        <div class="arr-scroll" id="arrScroll">
+          <div class="arr-inner" id="arrInner"><canvas class="arr-ruler" id="arrRuler"></canvas><div class="arr-rows" id="arrRows"></div><div class="arr-ph" id="arrPlayhead"></div></div>
+        </div>
+      </section>
+      <section class="editor" id="editor">
+        <div class="ed-bar"><span class="ed-title" id="editorTitle">Editor</span><div class="ed-tools" id="editorTools"></div></div>
+        <div class="ed-body" id="editorBody" tabindex="-1"></div>
+      </section>
+    </div>
+    <aside class="inspector" id="inspector"></aside>
+  </div>
+
+  <div class="view sfx" id="sfxView" hidden></div>
+
+  <div class="menu-pop" id="menuPop" hidden></div>
+  <div id="modal" class="modal" hidden><div class="modal-box" id="modalBox"></div></div>
+  <div id="toasts" class="toasts"></div>
+
+  <script src="vendor/mediabunny.min.js"></script>
+  <script src="vendor/mp3-encoder.min.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/synth.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/sfx.js"></script>
+  <script src="js/arrange.js"></script>
+  <script src="js/editors.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
