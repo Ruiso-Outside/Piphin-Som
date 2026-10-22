@@ -13,6 +13,13 @@ Estúdio de música e efeitos sonoros, módulo do [Piphin Hub](https://github.co
 - **Exportação** MP3, WAV, M4A (AAC) e OGG (Opus); projetos `.psom`
 - **IA**: com o Piphin LLM, a IA compõe (faixas, acordes, batidas, notas), ajusta a mixagem, cria efeitos sonoros e exporta
 
+## Mídia do Hub
+Com o Piphin Hub 1.7.0 ou mais novo:
+- Músicas exportadas e efeitos sonoros entram na **Mídia** do Hub; o Piphin Vídeo usa direto.
+- Em Efeitos sonoros, **Salvar na Mídia** guarda o efeito em Música\Piphin Som\efeitos sem perguntar onde.
+- **Importar da Mídia** (menu Arquivo ou na faixa de áudio): músicas baixadas no Piphin Música e áudios dos outros módulos.
+- **Abrir no Piphin Som** em outro módulo: o áudio entra na música aberta.
+
 ## Créditos
 
 - [Mediabunny](https://github.com/Vanilagy/mediabunny) (MPL-2.0): gravação de M4A, OGG e MP3

@@ -1,6 +1,7 @@
 // Piphin Som como módulo do Piphin Hub. O som é gerado e mixado na tela (Web Audio); aqui ficam os arquivos:
 // ler áudios importados, guardar amostras (gravações do microfone e efeitos gerados), projetos, exportação,
-// recentes e a ponte das ferramentas da IA (Piphin LLM).
+// recentes e a ponte das ferramentas da IA (Piphin LLM). Com o Hub 1.7.0+, as músicas exportadas e os efeitos
+// sonoros entram na Mídia do Hub (o Piphin Vídeo usa direto) e dá para importar o que os outros módulos criaram.
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -69,7 +70,7 @@ exports.activate = (ctx) => {
   ctx.handle("recent", () => recent.filter((f) => fs.existsSync(f)).map((f) => ({ path: f, name: path.basename(f), dir: path.dirname(f) })));
 
   // ---------------------------------------------------------------- exportar
-  ctx.handle("export", async ({ bytes, path: file, suggested, ext }) => {
+  ctx.handle("export", async ({ bytes, path: file, suggested, ext, meta }) => {
     if (!file) {
       fs.mkdirSync(musicDir(), { recursive: true });
       file = await ctx.host.saveDialog({ title: "Exportar áudio", defaultPath: path.join(musicDir(), suggested || "musica." + ext), filters: [{ name: ext.toUpperCase(), extensions: [ext] }] });
@@ -77,9 +78,48 @@ exports.activate = (ctx) => {
     }
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength));
-    return { path: file, name: path.basename(file), size: bytes.byteLength };
+    const r = { path: file, name: path.basename(file), size: bytes.byteLength };
+    toLibrary(r, meta);
+    return r;
   });
   ctx.handle("show-item", (file) => ctx.host.showItem(file));
+
+  // ---------------------------------------------------------------- Mídia do Hub (no Hub antigo, ctx.host.library não existe)
+  const lib = ctx.host.library || null;
+  const toLibrary = (r, meta) => {
+    if (!lib || !r || !meta) return;
+    lib.add({ path: r.path, kind: "audio", title: String(meta.title || path.basename(r.path).replace(/\.[^.]+$/, "")), sub: meta.sub || "Feito no Piphin Som",
+      duration: meta.duration, tags: meta.tags }).catch((e) => ctx.log("mídia", e));
+  };
+  ctx.handle("hub-features", () => ({ library: !!lib }));
+  ctx.handle("library-pick", async () => {
+    if (!lib) throw new Error("Atualize o Piphin Hub para usar a Mídia");
+    const items = await lib.pick({ kinds: ["audio"], multi: true, title: "Importar da Mídia" });
+    return items.map((it) => readAudio(it.path));
+  });
+  // efeito sonoro direto para a Mídia (sem perguntar onde salvar): Música\Piphin Som\efeitos
+  ctx.handle("save-effect", ({ bytes, name, duration }) => {
+    const dir = path.join(musicDir(), "efeitos");
+    fs.mkdirSync(dir, { recursive: true });
+    const base = String(name || "efeito").replace(/[\\/:*?"<>|]/g, "_").slice(0, 40);
+    let file = path.join(dir, base + ".wav");
+    for (let i = 2; fs.existsSync(file); i++) file = path.join(dir, `${base} ${i}.wav`);
+    fs.writeFileSync(file, Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength));
+    const r = { path: file, name: path.basename(file), size: bytes.byteLength };
+    toLibrary(r, { title: path.basename(file, ".wav"), sub: "Efeito sonoro", duration, tags: ["efeito"] });
+    return r;
+  });
+  // "Abrir no Piphin Som" de outro módulo: o áudio entra na música aberta
+  ctx.host.on("open-file", async (f) => {
+    try {
+      const file = readAudio(f.path);
+      if (!uiReady) {
+        await ctx.host.focus().catch(() => {});
+        await new Promise((resolve) => { readyWaiters.push(resolve); setTimeout(resolve, 20000); });
+      }
+      ctx.emit("open-file", { file, title: f.title, from: f.fromName });
+    } catch (e) { ctx.log("abrir arquivo", e); }
+  });
   ctx.handle("music-dir", () => musicDir());
   ctx.handle("prefs", (patch) => {
     let prefs = readJson(PREFS_FILE, {});

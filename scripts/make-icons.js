@@ -16,7 +16,7 @@ waves activity sliders-horizontal sliders-vertical volume-2 volume-x headphones 
 bomb heart rocket bell gamepad-2 mouse-pointer-click footprints swords crosshair siren wind droplet sun cloud-rain undo-2 redo-2 download
 folder-open save file-plus import plus minus x check settings trash-2 copy scissors magnet zoom-in zoom-out maximize chevron-down
 chevron-right chevron-up layers eye lock lock-open keyboard info timer gauge metronome list grip-vertical pencil eraser move
-arrow-left-right flip-horizontal-2 bot circle-dot disc-3 speaker filter funnel
+arrow-left-right flip-horizontal-2 bot circle-dot disc-3 speaker filter funnel library
 `.split(/\s+/).filter(Boolean);
 
 const css = [`/* Piphin Som · ícones (Lucide ${require(path.join(LUCIDE, "package.json")).version}, ISC) · gerado por scripts/make-icons.js */`,

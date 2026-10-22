@@ -27,6 +27,7 @@
   });
   const pop = $("#menuPop");
   let openMenu = null;
+  let hubLib = false; // Hub 1.7.0+: Mídia compartilhada entre os módulos
   PS.menu = (x, y, items, idx = -1) => {
     pop.innerHTML = items.map((it) => it === "-" ? `<div class="sep"></div>` : `<button class="mi" data-cmd="${it[0]}" ${it[4] ? "disabled" : ""}><i class="i i-${it[1]}"></i>${esc(it[2])}${it[3] ? `<span class="k">${it[3]}</span>` : ""}</button>`).join("");
     pop.hidden = false;
@@ -116,7 +117,7 @@
       h += `<div class="ins-sec"><h4><i class="i i-drum"></i>Bateria</h4><label class="fld two"><span>Kit</span><select data-k="kit">${Object.entries(PS.KITS).map(([k, s]) => `<option value="${k}" ${t.kit === k ? "selected" : ""}>${s.name}</option>`).join("")}</select></label>
         <div class="presets">${PS.DRUMS.map(([p, n]) => `<button data-hit="${p}"><i class="i i-drum"></i>${n}</button>`).join("")}</div></div>`;
     } else h += `<div class="ins-sec"><h4><i class="i i-mic"></i>Áudio</h4><p class="hint">Grave com o microfone: selecione esta faixa e aperte o botão vermelho (ou Shift+R). Ou arraste arquivos de áudio para cá.</p>
-      <button class="btn sm" data-cmd="import"><i class="i i-import"></i>Importar áudio...</button></div>`;
+      <button class="btn sm" data-cmd="import"><i class="i i-import"></i>Importar áudio...</button>${hubLib ? `<button class="btn sm" data-cmd="library"><i class="i i-library"></i>Da Mídia...</button>` : ""}</div>`;
     h += `<div class="ins-sec"><h4><i class="i i-sliders-horizontal"></i>Mixagem</h4>${sld("volume", "Volume", 0, 150, 1, Math.round((t.volume ?? 0.8) * 100), Math.round((t.volume ?? 0.8) * 100) + "%")}
         ${sld("pan", "Esquerda/direita", -100, 100, 1, Math.round((t.pan || 0) * 100), Math.round((t.pan || 0) * 100))}</div>
       <div class="ins-sec"><h4><i class="i i-sparkles"></i>Efeitos</h4>
@@ -225,6 +226,7 @@
     undo: () => { const l = PS.undo(); if (l) PS.toast("Desfeito: " + l, "info"); }, redo: () => PS.redo(),
     "add-inst": () => addTrack("inst", { instrument: "piano" }), "add-drums": () => { const t = addTrack("drums"); PS.edit("Batida", () => { const c = PS.writeDrums(t, { style: "pop", startBar: 1, bars: 4 }); S.selClip = c.id; }); }, "add-audio": () => addTrack("audio"),
     import: guard(async () => { const list = await call("import-dialog"); if (list.length) await PS.importFiles(list); }),
+    library: guard(async () => { const list = await call("library-pick"); if (list.length) await PS.importFiles(list); }),
     "clip-dup": () => { const f = selClip(); if (f) PS.edit("Duplicar clipe", () => { const c = JSON.parse(JSON.stringify(f.c)); c.id = PS.uid("c"); c.start = f.c.start + PS.clipLen(f.c); f.t.clips.push(c); S.selClip = c.id; }); },
     "clip-del": () => { const f = selClip(); if (f) PS.edit("Apagar clipe", () => { f.t.clips = f.t.clips.filter((x) => x !== f.c); S.selClip = null; }); },
     "clip-split": () => {
@@ -259,7 +261,7 @@
 
   const MENUS = [
     ["Arquivo", [["new", "file-plus", "Nova música...", "Ctrl+N"], ["open", "folder-open", "Abrir projeto...", "Ctrl+O"], ["save", "save", "Salvar projeto", "Ctrl+S"], ["save-as", "save", "Salvar como...", "Ctrl+Shift+S"], "-",
-      ["import", "import", "Importar áudio...", "Ctrl+I"], ["export", "download", "Exportar (MP3, WAV...)", "Ctrl+E"]]],
+      ["import", "import", "Importar áudio...", "Ctrl+I"], ["library", "library", "Importar da Mídia do Hub..."], ["export", "download", "Exportar (MP3, WAV...)", "Ctrl+E"]]],
     ["Editar", [["undo", "undo-2", "Desfazer", "Ctrl+Z"], ["redo", "redo-2", "Refazer", "Ctrl+Shift+Z"], "-", ["clip-dup", "copy", "Duplicar clipe", "Ctrl+D"], ["clip-split", "scissors", "Dividir clipe no cursor"],
       ["clip-del", "trash-2", "Apagar clipe", "Delete"], "-", ["shortcuts", "keyboard", "Atalhos e teclado musical"]]],
     ["Inserir", [["add-inst", "piano", "Faixa de instrumento"], ["add-drums", "drum", "Faixa de bateria"], ["add-audio", "mic", "Faixa de áudio"], "-", ["chords-dialog", "music-4", "Acordes na faixa selecionada..."], ["demo", "sparkles", "Música de exemplo"]]],
@@ -458,7 +460,7 @@
       <section class="sfx-main"><div class="sfx-wave"><canvas id="sfxCv"></canvas></div>
         <div class="sfx-actions"><button class="btn primary big" data-sx="play"><i class="i i-play"></i>Ouvir</button><button class="btn" data-sx="vary"><i class="i i-dices"></i>Outra variação</button>
           <button class="btn" data-sx="mutate"><i class="i i-shuffle"></i>Mudar um pouco</button><button class="btn" data-sx="random"><i class="i i-wand-sparkles"></i>Surpresa</button>
-          <div class="grow"></div><button class="btn" data-sx="wav"><i class="i i-download"></i>Salvar WAV</button><button class="btn" data-sx="song"><i class="i i-music-4"></i>Colocar na música</button></div>
+          <div class="grow"></div><button class="btn" data-sx="media" ${hubLib ? "" : "hidden"} title="Salva o efeito e ele aparece na Mídia do Hub (o Piphin Vídeo usa direto)"><i class="i i-library"></i>Salvar na Mídia</button><button class="btn" data-sx="wav"><i class="i i-download"></i>Salvar WAV</button><button class="btn" data-sx="song"><i class="i i-music-4"></i>Colocar na música</button></div>
         <details class="more" open><summary>Parâmetros</summary><div class="sfx-params" id="sfxParams"></div></details></section>
       <aside class="sfx-side"><h3>Feitos agora</h3><div id="sfxHist"></div><p class="hint">Espaço toca o som. Cada clique em <b>Outra variação</b> sorteia um som novo do mesmo modelo.</p></aside>`;
     renderSfxParams(); drawSfx(); renderSfxHist();
@@ -495,7 +497,13 @@
     if (a === "vary") { sfxP = PS.sfx.fromPreset(sfxP.preset || "blip", { seed: Date.now() % 1e9, variation: 60 }); renderSfxParams(); drawSfx(); playSfx(); pushHist(); }
     if (a === "mutate") { sfxP = PS.sfx.mutate(sfxP, 0.15); sfxP.seed = Date.now() % 1e9; renderSfxParams(); drawSfx(); playSfx(); pushHist(); }
     if (a === "random") { sfxP = PS.sfx.randomAll(Date.now() % 1e9); renderSfx(); playSfx(); pushHist(); }
-    if (a === "wav") { const r = await call("export", { bytes: PS.wav(sfxBuf), path: null, suggested: `${(PS.sfx.PRESETS[sfxP.preset] || ["som"])[0].toLowerCase()}.wav`, ext: "wav" }); if (r) PS.toast("Efeito salvo: " + r.name, "ok", { label: "Mostrar", run: () => call("show-item", r.path) }); }
+    if (a === "media") {
+      const name = (PS.sfx.PRESETS[sfxP.preset] || ["Efeito"])[0];
+      const r = await call("save-effect", { bytes: PS.wav(sfxBuf), name, duration: sfxBuf.duration });
+      PS.toast(`"${r.name.replace(/\.wav$/, "")}" está na Mídia do Hub`, "ok", { label: "Mostrar", run: () => call("show-item", r.path) });
+    }
+    if (a === "wav") { const r = await call("export", { bytes: PS.wav(sfxBuf), path: null, suggested: `${(PS.sfx.PRESETS[sfxP.preset] || ["som"])[0].toLowerCase()}.wav`, ext: "wav",
+      meta: { title: (PS.sfx.PRESETS[sfxP.preset] || ["Efeito"])[0], sub: "Efeito sonoro", duration: sfxBuf.duration, tags: ["efeito"] } }); if (r) PS.toast("Efeito salvo: " + r.name, "ok", { label: "Mostrar", run: () => call("show-item", r.path) }); }
     if (a === "song") { await sfxToSong(sfxBuf, (PS.sfx.PRESETS[sfxP.preset] || ["Efeito"])[0], S.beat); setTab("music"); }
   }));
   $("#sfxView").addEventListener("input", (e) => {
@@ -540,7 +548,8 @@
       const bytes = await encode(buf, format, quality);
       $("#xBar").style.width = "95%";
       const name = (S.song.name || "musica").replace(/[\\/:*?"<>|]/g, "_");
-      const r = await call("export", { bytes, path: path || (dir ? `${dir}\\${name}.${format}` : null), suggested: `${name}.${format}`, ext: format });
+      const r = await call("export", { bytes, path: path || (dir ? `${dir}\\${name}.${format}` : null), suggested: `${name}.${format}`, ext: format,
+        meta: { title: S.song.name || name, sub: what === "loop" ? "Loop do Piphin Som" : "Música do Piphin Som", duration: buf.duration } });
       closeModal();
       if (r) PS.toast(`Exportado: ${r.name} (${fmt(r.size / 1048576, 1)} MB, ${PS.timeText(buf.duration)})`, "ok", { label: "Mostrar", run: () => call("show-item", r.path) });
       return r && { ...r, duration: buf.duration };
@@ -616,7 +625,8 @@
       const p = PS.sfx.fromPreset(a.preset, { seed: Date.now() % 1e9, variation: a.variation ?? 30, pitch: a.pitch || 0, length: a.length || 1 });
       const buf = PS.sfx.render(p), name = (PS.sfx.PRESETS[a.preset] || [a.preset])[0];
       const dir = await call("music-dir");
-      const r = await call("export", { bytes: PS.wav(buf), path: a.path || `${dir}\\efeitos\\${a.preset}-${String(p.seed).slice(-5)}.wav`, ext: "wav" });
+      const r = await call("export", { bytes: PS.wav(buf), path: a.path || `${dir}\\efeitos\\${a.preset}-${String(p.seed).slice(-5)}.wav`, ext: "wav",
+        meta: { title: name, sub: "Efeito sonoro", duration: buf.duration, tags: ["efeito"] } });
       if (a.add_to_song) await sfxToSong(buf, name, ((a.start_bar || 1) - 1) * PS.barBeats());
       E.audition(buf);
       return { saved: r.path, seconds: +buf.duration.toFixed(2), added_to_song: !!a.add_to_song };
@@ -631,6 +641,12 @@
     catch (e) { piphin.invoke("ai-reply", id, false, e.message); }
   });
   window.addEventListener("beforeunload", () => { piphin.invoke("ui-unload"); });
+  // chegou de outro módulo ("Abrir no Piphin Som"): entra na música, no cursor
+  piphin.on("open-file", guard(async ({ file, title, from }) => {
+    setTab("music");
+    await PS.importFiles([file]);
+    PS.toast(`"${title || file.name}" chegou do ${from || "Hub"}`, "ok");
+  }));
 
   // ---------------------------------------------------------------- início
   (async () => {
@@ -638,6 +654,8 @@
     if (prefs.exportPrefs) S.exportPrefs = prefs.exportPrefs;
     starterTracks();
     S.dirty = false;
+    const feats = await call("hub-features").catch(() => ({}));
+    hubLib = !!(feats && feats.library);
     PS.emit("song", {}); PS.emit("select"); PS.emit("beat", 0); PS.emit("loop");
     piphin.invoke("ui-ready");
   })();
