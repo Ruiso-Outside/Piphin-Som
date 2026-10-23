@@ -84,7 +84,7 @@ PS.arrange = (() => {
       if (bw() >= 14) for (let k = 1; k < bb; k++) { g.fillStyle = "rgba(255,255,255,.12)"; g.fillRect(Math.round(x + k * bw()), 20, 1, 8); }
     }
     g.fillStyle = "#0d0c14"; g.fillRect(0, 0, HEAD_W, RULER);
-    g.fillStyle = "#6f6b8b"; g.fillText("Compasso", 12, 9);
+    g.fillStyle = "#6f6b8b"; g.fillText(window.piphinT ? piphinT("Compasso") : "Compasso", 12, 9); // canvas: o Hub não traduz sozinho
   }
   function placeHead() {
     head.style.left = xOf(S.beat) + "px";

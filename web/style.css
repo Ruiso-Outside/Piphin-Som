@@ -12,7 +12,7 @@ body { display: flex; flex-direction: column; }
 .brand { display: flex; align-items: center; gap: 7px; font: 700 14px var(--p-font-display); color: #fff; margin-right: 4px; }
 .brand .i { color: var(--sx); font-size: 18px; }
 .menus { display: flex; gap: 1px; }
-.menus button { height: 30px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--p-text-2); font: 500 13px var(--p-font); cursor: pointer; }
+.menus button { height: 30px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--p-text-2); font: 500 13px var(--p-font); cursor: pointer; white-space: nowrap; }
 .menus button:hover, .menus button.open { background: var(--p-hover); color: var(--p-text); }
 .tabs { margin-left: 10px; }
 .seg.mini { padding: 2px; border-radius: 9px; }
