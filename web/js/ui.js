@@ -102,7 +102,7 @@
       <button class="btn sm icon ghost" data-cmd="track-up" title="Subir"><i class="i i-chevron-up"></i></button><button class="btn sm icon ghost" data-cmd="track-down" title="Descer"><i class="i i-chevron-down"></i></button>
       <button class="btn sm icon ghost" data-cmd="track-dup" title="Duplicar faixa"><i class="i i-copy"></i></button><button class="btn sm icon ghost" data-cmd="track-del" title="Apagar faixa"><i class="i i-trash-2"></i></button></div></div>
       <div class="ins-body"><label class="fld two"><span>Nome</span><input type="text" data-k="name" value="${esc(t.name)}"></label>
-      <div class="swatches">${PS.COLORS.map((c) => `<button style="background:${c}" class="${t.color === c ? "on" : ""}" data-color="${c}"></button>`).join("")}</div>`;
+      <div class="swatches">${PS.COLORS.map((c) => `<button style="background:${c}" class="${t.color === c ? "on" : ""}" data-color="${c}" title="Cor da faixa"></button>`).join("")}</div>`;
     if (t.kind === "inst") {
       h += `<div class="ins-sec"><h4><i class="i i-piano"></i>Instrumento</h4><div class="presets">${Object.entries(PS.PRESETS).map(([k, p]) => `<button class="${P.preset === k ? "on" : ""}" data-preset="${k}"><i class="i i-${p.icon}"></i>${esc(p.name)}</button>`).join("")}</div>
         <details class="more"><summary>Ajustar o som</summary><div class="ins-sec">
