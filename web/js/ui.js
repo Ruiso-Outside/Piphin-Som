@@ -528,6 +528,8 @@
     if (format === "mp3" && !(await MB.canEncodeAudio("mp3"))) window.MediabunnyMp3Encoder.registerMp3Encoder();
     const out = new MB.Output({ format: format === "mp3" ? new MB.Mp3OutputFormat() : format === "ogg" ? new MB.OggOutputFormat() : new MB.Mp4OutputFormat(), target: new MB.BufferTarget() });
     const codec = { mp3: "mp3", m4a: "aac", ogg: "opus" }[format];
+    // M4A precisa do AAC, que não existe no Chromium do Linux
+    if (codec === "aac" && !(await MB.canEncodeAudio("aac", { numberOfChannels: buf.numberOfChannels, sampleRate: buf.sampleRate }))) throw new Error("M4A não está disponível neste sistema: exporte em MP3 ou OGG");
     // nem todo codificador aceita todas as taxas: tenta a pedida e depois as menores
     let bitrate = BITRATE[format][quality] || BITRATE[format].high;
     for (const b of [bitrate, 192000, 160000, 128000, 96000]) { if (b <= bitrate && (await MB.canEncodeAudio(codec, { numberOfChannels: buf.numberOfChannels, sampleRate: buf.sampleRate, bitrate: b }))) { bitrate = b; break; } }
