@@ -5,6 +5,21 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+
+// Pastas do usuário: no Linux seguem o idioma do sistema (~/Imagens, ~/Músicas...) pelo user-dirs.dirs.
+// Se a pasta em inglês já existe (sistema em inglês ou dados de antes), continua nela.
+function userDir(name) { // "Pictures" | "Videos" | "Music" | "Documents" | "Downloads" | "Desktop"
+  const home = os.homedir(), en = path.join(home, name);
+  if (process.platform !== "linux" || fs.existsSync(en)) return en;
+  const key = { Pictures: "PICTURES", Videos: "VIDEOS", Music: "MUSIC", Documents: "DOCUMENTS", Downloads: "DOWNLOAD", Desktop: "DESKTOP" }[name];
+  try {
+    const cfg = fs.readFileSync(path.join(process.env.XDG_CONFIG_HOME || path.join(home, ".config"), "user-dirs.dirs"), "utf8");
+    const m = new RegExp(`^XDG_${key}_DIR="(.+)"`, "m").exec(cfg);
+    const d = m && m[1].replace(/^\$HOME/, home);
+    if (d && path.isAbsolute(d) && d !== home) return d;
+  } catch { /* sem user-dirs.dirs */ }
+  return en;
+}
 const crypto = require("crypto");
 
 const AUDIO = ["wav", "mp3", "ogg", "opus", "m4a", "aac", "flac", "webm", "mp4"];
@@ -16,7 +31,7 @@ exports.activate = (ctx) => {
   const PREFS_FILE = path.join(ctx.dataDir, "prefs.json");
   const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { return d; } };
   let recent = readJson(RECENT_FILE, []);
-  const musicDir = () => path.join(os.homedir(), "Music", "Piphin Som");
+  const musicDir = () => path.join(userDir("Music"), "Piphin Som");
   const remember = (file) => {
     recent = [file, ...recent.filter((f) => f.toLowerCase() !== file.toLowerCase())].slice(0, 12);
     try { fs.writeFileSync(RECENT_FILE, JSON.stringify(recent, null, 1)); } catch { /* sem disco */ }
