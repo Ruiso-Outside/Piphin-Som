@@ -27,7 +27,7 @@
   });
   const pop = $("#menuPop");
   let openMenu = null;
-  let hubLib = false; // Hub 1.7.0+: Mídia compartilhada entre os módulos
+  let hubLib = false; // Central 1.7.0+: Mídia compartilhada entre os módulos
   PS.menu = (x, y, items, idx = -1) => {
     pop.innerHTML = items.map((it) => it === "-" ? `<div class="sep"></div>` : `<button class="mi" data-cmd="${it[0]}" ${it[4] ? "disabled" : ""}><i class="i i-${it[1]}"></i>${esc(it[2])}${it[3] ? `<span class="k">${it[3]}</span>` : ""}</button>`).join("");
     pop.hidden = false;
@@ -261,7 +261,7 @@
 
   const MENUS = [
     ["Arquivo", [["new", "file-plus", "Nova música...", "Ctrl+N"], ["open", "folder-open", "Abrir projeto...", "Ctrl+O"], ["save", "save", "Salvar projeto", "Ctrl+S"], ["save-as", "save", "Salvar como...", "Ctrl+Shift+S"], "-",
-      ["import", "import", "Importar áudio...", "Ctrl+I"], ["library", "library", "Importar da Mídia do Hub..."], ["export", "download", "Exportar (MP3, WAV...)", "Ctrl+E"]]],
+      ["import", "import", "Importar áudio...", "Ctrl+I"], ["library", "library", "Importar da Mídia da Central..."], ["export", "download", "Exportar (MP3, WAV...)", "Ctrl+E"]]],
     ["Editar", [["undo", "undo-2", "Desfazer", "Ctrl+Z"], ["redo", "redo-2", "Refazer", "Ctrl+Shift+Z"], "-", ["clip-dup", "copy", "Duplicar clipe", "Ctrl+D"], ["clip-split", "scissors", "Dividir clipe no cursor"],
       ["clip-del", "trash-2", "Apagar clipe", "Delete"], "-", ["shortcuts", "keyboard", "Atalhos e teclado musical"]]],
     ["Inserir", [["add-inst", "piano", "Faixa de instrumento"], ["add-drums", "drum", "Faixa de bateria"], ["add-audio", "mic", "Faixa de áudio"], "-", ["chords-dialog", "music-4", "Acordes na faixa selecionada..."], ["demo", "sparkles", "Música de exemplo"]]],
@@ -460,7 +460,7 @@
       <section class="sfx-main"><div class="sfx-wave"><canvas id="sfxCv"></canvas></div>
         <div class="sfx-actions"><button class="btn primary big" data-sx="play"><i class="i i-play"></i>Ouvir</button><button class="btn" data-sx="vary"><i class="i i-dices"></i>Outra variação</button>
           <button class="btn" data-sx="mutate"><i class="i i-shuffle"></i>Mudar um pouco</button><button class="btn" data-sx="random"><i class="i i-wand-sparkles"></i>Surpresa</button>
-          <div class="grow"></div><button class="btn" data-sx="media" ${hubLib ? "" : "hidden"} title="Salva o efeito e ele aparece na Mídia do Hub (o Piphin Vídeo usa direto)"><i class="i i-library"></i>Salvar na Mídia</button><button class="btn" data-sx="wav"><i class="i i-download"></i>Salvar WAV</button><button class="btn" data-sx="song"><i class="i i-music-4"></i>Colocar na música</button></div>
+          <div class="grow"></div><button class="btn" data-sx="media" ${hubLib ? "" : "hidden"} title="Salva o efeito e ele aparece na Mídia da Central (o Arasaka Braindance usa direto)"><i class="i i-library"></i>Salvar na Mídia</button><button class="btn" data-sx="wav"><i class="i i-download"></i>Salvar WAV</button><button class="btn" data-sx="song"><i class="i i-music-4"></i>Colocar na música</button></div>
         <details class="more" open><summary>Parâmetros</summary><div class="sfx-params" id="sfxParams"></div></details></section>
       <aside class="sfx-side"><h3>Feitos agora</h3><div id="sfxHist"></div><p class="hint">Espaço toca o som. Cada clique em <b>Outra variação</b> sorteia um som novo do mesmo modelo.</p></aside>`;
     renderSfxParams(); drawSfx(); renderSfxHist();
@@ -479,7 +479,7 @@
     g.strokeStyle = "rgba(255,255,255,.08)"; g.beginPath(); g.moveTo(0, H / 2); g.lineTo(W, H / 2); g.stroke();
     const grad = g.createLinearGradient(0, 0, W, 0); grad.addColorStop(0, "#22c55e"); grad.addColorStop(1, "#a3e635"); g.fillStyle = grad;
     for (let x = 0; x < W; x++) { const a = Math.floor((x / W) * d.length), b = Math.floor(((x + 1) / W) * d.length); let mx = 0; for (let i = a; i < b; i++) mx = Math.max(mx, Math.abs(d[i])); const h = Math.max(1, mx * H * 0.9); g.fillRect(x, (H - h) / 2, 1, h); }
-    g.fillStyle = "#a9a6c2"; g.font = "12px Segoe UI"; g.fillText(`${fmt(sfxBuf.duration, 2)} s`, 10, 18);
+    g.fillStyle = "#b9adad"; g.font = "12px Segoe UI"; g.fillText(`${fmt(sfxBuf.duration, 2)} s`, 10, 18);
   }
   const playSfx = () => { if (sfxBuf) E.audition(sfxBuf); };
   function renderSfxHist() {
@@ -500,7 +500,7 @@
     if (a === "media") {
       const name = (PS.sfx.PRESETS[sfxP.preset] || ["Efeito"])[0];
       const r = await call("save-effect", { bytes: PS.wav(sfxBuf), name, duration: sfxBuf.duration });
-      PS.toast(`"${r.name.replace(/\.wav$/, "")}" está na Mídia do Hub`, "ok", { label: "Mostrar", run: () => call("show-item", r.path) });
+      PS.toast(`"${r.name.replace(/\.wav$/, "")}" está na Mídia da Central`, "ok", { label: "Mostrar", run: () => call("show-item", r.path) });
     }
     if (a === "wav") { const r = await call("export", { bytes: PS.wav(sfxBuf), path: null, suggested: `${(PS.sfx.PRESETS[sfxP.preset] || ["som"])[0].toLowerCase()}.wav`, ext: "wav",
       meta: { title: (PS.sfx.PRESETS[sfxP.preset] || ["Efeito"])[0], sub: "Efeito sonoro", duration: sfxBuf.duration, tags: ["efeito"] } }); if (r) PS.toast("Efeito salvo: " + r.name, "ok", { label: "Mostrar", run: () => call("show-item", r.path) }); }
@@ -551,7 +551,7 @@
       $("#xBar").style.width = "95%";
       const name = (S.song.name || "musica").replace(/[\\/:*?"<>|]/g, "_");
       const r = await call("export", { bytes, path: path || (dir ? `${dir}\\${name}.${format}` : null), suggested: `${name}.${format}`, ext: format,
-        meta: { title: S.song.name || name, sub: what === "loop" ? "Loop do Piphin Som" : "Música do Piphin Som", duration: buf.duration } });
+        meta: { title: S.song.name || name, sub: what === "loop" ? "Loop do Arasaka Synth" : "Música do Arasaka Synth", duration: buf.duration } });
       closeModal();
       if (r) PS.toast(`Exportado: ${r.name} (${fmt(r.size / 1048576, 1)} MB, ${PS.timeText(buf.duration)})`, "ok", { label: "Mostrar", run: () => call("show-item", r.path) });
       return r && { ...r, duration: buf.duration };
@@ -647,7 +647,7 @@
   piphin.on("open-file", guard(async ({ file, title, from }) => {
     setTab("music");
     await PS.importFiles([file]);
-    PS.toast(`"${title || file.name}" chegou do ${from || "Hub"}`, "ok");
+    PS.toast(`"${title || file.name}" chegou do ${from || "Central"}`, "ok");
   }));
 
   // ---------------------------------------------------------------- início

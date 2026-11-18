@@ -48,19 +48,19 @@ exports.activate = (ctx) => {
   // ---------------------------------------------------------------- projetos
   async function openProject(file) {
     const project = JSON.parse(fs.readFileSync(file, "utf8"));
-    if (!project || project.schema !== 1) throw new Error("Projeto do Piphin Som inválido");
+    if (!project || project.schema !== 1) throw new Error("Projeto do Arasaka Synth inválido");
     remember(file);
     return { path: file, name: path.basename(file), project };
   }
   ctx.handle("open-project-dialog", async () => {
-    const list = await ctx.host.openDialog({ title: "Abrir projeto", properties: ["openFile"], filters: [{ name: "Projeto do Piphin Som", extensions: ["psom"] }] });
+    const list = await ctx.host.openDialog({ title: "Abrir projeto", properties: ["openFile"], filters: [{ name: "Projeto do Arasaka Synth", extensions: ["psom"] }] });
     return list && list[0] ? openProject(list[0]) : null;
   });
   ctx.handle("open-project", (file) => openProject(String(file)));
   ctx.handle("save-project", async ({ text, path: file, suggested }) => {
     if (!file) {
       fs.mkdirSync(musicDir(), { recursive: true });
-      file = await ctx.host.saveDialog({ title: "Salvar projeto", defaultPath: path.join(musicDir(), suggested || "musica.psom"), filters: [{ name: "Projeto do Piphin Som", extensions: ["psom"] }] });
+      file = await ctx.host.saveDialog({ title: "Salvar projeto", defaultPath: path.join(musicDir(), suggested || "musica.psom"), filters: [{ name: "Projeto do Arasaka Synth", extensions: ["psom"] }] });
       if (!file) return null;
     }
     fs.writeFileSync(file, text);
@@ -88,12 +88,12 @@ exports.activate = (ctx) => {
   const lib = ctx.host.library || null;
   const toLibrary = (r, meta) => {
     if (!lib || !r || !meta) return;
-    lib.add({ path: r.path, kind: "audio", title: String(meta.title || path.basename(r.path).replace(/\.[^.]+$/, "")), sub: meta.sub || "Feito no Piphin Som",
+    lib.add({ path: r.path, kind: "audio", title: String(meta.title || path.basename(r.path).replace(/\.[^.]+$/, "")), sub: meta.sub || "Feito no Arasaka Synth",
       duration: meta.duration, tags: meta.tags }).catch((e) => ctx.log("mídia", e));
   };
   ctx.handle("hub-features", () => ({ library: !!lib }));
   ctx.handle("library-pick", async () => {
-    if (!lib) throw new Error("Atualize o Piphin Hub para usar a Mídia");
+    if (!lib) throw new Error("Atualize a Arasaka Central para usar a Mídia");
     const items = await lib.pick({ kinds: ["audio"], multi: true, title: "Importar da Mídia" });
     return items.map((it) => readAudio(it.path));
   });
@@ -132,16 +132,16 @@ exports.activate = (ctx) => {
   const readyWaiters = [], pending = new Map();
   let aiSeq = 0;
   ctx.handle("ui-ready", () => { uiReady = true; readyWaiters.splice(0).forEach((f) => f()); return true; });
-  ctx.handle("ui-unload", () => { uiReady = false; for (const p of pending.values()) p.reject(new Error("A tela do Piphin Som foi fechada")); pending.clear(); return true; });
+  ctx.handle("ui-unload", () => { uiReady = false; for (const p of pending.values()) p.reject(new Error("A tela do Arasaka Synth foi fechada")); pending.clear(); return true; });
   ctx.handle("ai-reply", (id, ok, data) => { const p = pending.get(id); if (p) { pending.delete(id); ok ? p.resolve(data) : p.reject(new Error(data)); } return true; });
   async function toUi(name, args, timeout = 180000) {
     if (!uiReady) {
       await ctx.host.focus().catch(() => {});
-      await new Promise((resolve, reject) => { const t = setTimeout(() => reject(new Error("A tela do Piphin Som não abriu")), 20000); readyWaiters.push(() => { clearTimeout(t); resolve(); }); });
+      await new Promise((resolve, reject) => { const t = setTimeout(() => reject(new Error("A tela do Arasaka Synth não abriu")), 20000); readyWaiters.push(() => { clearTimeout(t); resolve(); }); });
     }
     const id = ++aiSeq;
     return new Promise((resolve, reject) => {
-      const t = setTimeout(() => { pending.delete(id); reject(new Error("O Piphin Som não respondeu")); }, timeout);
+      const t = setTimeout(() => { pending.delete(id); reject(new Error("O Arasaka Synth não respondeu")); }, timeout);
       pending.set(id, { resolve: (v) => { clearTimeout(t); resolve(v); }, reject: (e) => { clearTimeout(t); reject(e); } });
       ctx.emit("ai-call", { id, name, args: args || {} });
     });
@@ -156,7 +156,7 @@ exports.activate = (ctx) => {
   ctx.handle("tool:export_audio", async (args = {}) => {
     const format = ["wav", "mp3", "m4a", "ogg"].includes(args.format) ? args.format : "mp3";
     const r = await toUi("export_audio", { format, quality: args.quality, path: args.path || null, dir: musicDir(), what: args.what }, 30 * 60 * 1000);
-    ctx.host.notify("Piphin Som", "A IA exportou o áudio: " + r.path).catch(() => {});
+    ctx.host.notify("Arasaka Synth", "A IA exportou o áudio: " + r.path).catch(() => {});
     return r;
   });
 };

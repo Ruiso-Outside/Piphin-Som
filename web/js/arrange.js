@@ -68,7 +68,7 @@ PS.arrange = (() => {
     ruler.width = Math.round(w * dpr); ruler.height = RULER * dpr; ruler.style.width = w + "px"; ruler.style.left = x0 + "px";
     const g = ruler.getContext("2d");
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.fillStyle = "#0d0c14"; g.fillRect(0, 0, w, RULER);
+    g.fillStyle = "#09090a"; g.fillRect(0, 0, w, RULER);
     const lp = S.song.loop, bb = PS.barBeats();
     if (lp) { // trecho de repetição
       const a = xOf(lp.start) - x0, b = xOf(lp.end) - x0;
@@ -80,11 +80,11 @@ PS.arrange = (() => {
       const x = xOf(bar * bb) - x0;
       if (x < HEAD_W - 1) continue;
       g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(Math.round(x), 12, 1, 16);
-      if (bar % every === 0) { g.fillStyle = "#a9a6c2"; g.fillText(String(bar + 1), Math.round(x) + 4, 12); }
+      if (bar % every === 0) { g.fillStyle = "#b9adad"; g.fillText(String(bar + 1), Math.round(x) + 4, 12); }
       if (bw() >= 14) for (let k = 1; k < bb; k++) { g.fillStyle = "rgba(255,255,255,.12)"; g.fillRect(Math.round(x + k * bw()), 20, 1, 8); }
     }
-    g.fillStyle = "#0d0c14"; g.fillRect(0, 0, HEAD_W, RULER);
-    g.fillStyle = "#6f6b8b"; g.fillText(window.piphinT ? piphinT("Compasso") : "Compasso", 12, 9); // canvas: o Hub não traduz sozinho
+    g.fillStyle = "#09090a"; g.fillRect(0, 0, HEAD_W, RULER);
+    g.fillStyle = "#8d8080"; g.fillText(window.piphinT ? piphinT("Compasso") : "Compasso", 12, 9); // canvas: a Central não traduz sozinho
   }
   function placeHead() {
     head.style.left = xOf(S.beat) + "px";

@@ -1,12 +1,12 @@
 {
   "id": "som",
-  "name": "Piphin Som",
+  "name": "Arasaka Synth",
   "version": "0.0.0",
   "description": "Estúdio de música e efeitos sonoros: instrumentos, bateria, piano roll, gravação, efeitos e exportação MP3/WAV.",
   "main": "backend.js",
   "ui": "web/index.html",
   "icon": "icons/som.png",
-  "accent": "#22c55e",
+  "accent": "#ff0000",
   "minHub": "1.4.0",
   "opens": ["audio"],
   "reservedKeys": [
@@ -18,7 +18,7 @@
       "name": "project_info",
       "title": "Ver a música",
       "readOnly": true,
-      "description": "Mostra a música aberta no Piphin Som: andamento (BPM), compasso, tamanho em compassos e as faixas (id, instrumento, volume) com os clipes de cada uma.",
+      "description": "Mostra a música aberta no Arasaka Synth: andamento (BPM), compasso, tamanho em compassos e as faixas (id, instrumento, volume) com os clipes de cada uma.",
       "input": {
         "type": "object",
         "properties": {}
@@ -339,7 +339,7 @@
     {
       "name": "make_sound_effect",
       "title": "Criar efeito sonoro",
-      "description": "Gera um efeito sonoro para jogos ou vídeos e salva em WAV (sem path, em Música\\Piphin Som). Pode também colocar na música.",
+      "description": "Gera um efeito sonoro para jogos ou vídeos e salva em WAV (sem path, em Música\\Arasaka Synth). Pode também colocar na música.",
       "input": {
         "type": "object",
         "properties": {
@@ -419,7 +419,7 @@
     {
       "name": "play",
       "title": "Tocar ou parar",
-      "description": "Toca a música no Piphin Som (ou para, se já estiver tocando).",
+      "description": "Toca a música no Arasaka Synth (ou para, se já estiver tocando).",
       "input": {
         "type": "object",
         "properties": {
@@ -466,7 +466,7 @@
     {
       "name": "undo",
       "title": "Desfazer",
-      "description": "Desfaz a última alteração no Piphin Som.",
+      "description": "Desfaz a última alteração no Arasaka Synth.",
       "input": {
         "type": "object",
         "properties": {}

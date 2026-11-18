@@ -242,7 +242,7 @@
     cv.width = W; cv.height = H;
     const g = cv.getContext("2d");
     const drawWave = () => {
-      g.clearRect(0, 0, W, H); g.fillStyle = "#0d0c14"; g.fillRect(0, 0, W, H);
+      g.clearRect(0, 0, W, H); g.fillStyle = "#09090a"; g.fillRect(0, 0, W, H);
       if (!buf) return;
       const d = buf.getChannelData(0);
       const a = (c.offset || 0) / dur * W, b = ((c.offset || 0) + (c.dur ?? dur - (c.offset || 0))) / dur * W;
