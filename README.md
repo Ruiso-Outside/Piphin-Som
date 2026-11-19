@@ -1,6 +1,8 @@
-# Piphin Som
+# Arasaka Synth
 
-Estúdio de música e efeitos sonoros, módulo do [Piphin Hub](https://github.com/Ruiso-Outside/Piphin-Hub). Roda dentro do Hub (cerca de 450 KB); todo o som é gerado no PC (Web Audio), sem amostras para baixar.
+> Antes chamado **Piphin Som**. Os arquivos, pastas e dados continuam com o nome antigo.
+
+Estúdio de música e efeitos sonoros, módulo do [Arasaka Central](https://github.com/Ruiso-Outside/ArasakaCentral). Roda dentro do Hub (cerca de 450 KB); todo o som é gerado no PC (Web Audio), sem amostras para baixar.
 
 - **Arranjo** com faixas de instrumento, bateria e áudio; clipes por compasso (mover, redimensionar, copiar com Alt, duplicar, dividir); trecho de repetição (loop), metrônomo e swing
 - **13 instrumentos sintetizados**: piano, piano elétrico, órgão, cordas, pad, baixo, baixo 808, lead, pluck, sino, chiptune, flauta e metais, com ajuste fino (onda, envelope, filtro, uníssono, FM, vibrato)
@@ -11,14 +13,14 @@ Estúdio de música e efeitos sonoros, módulo do [Piphin Hub](https://github.co
 - **Mixagem e efeitos** por faixa: volume, pan, reverb, eco sincronizado, distorção, filtros, EQ de 3 bandas e compressor; limitador final sem distorção
 - **Efeitos sonoros**: gerador com 20 modelos (moeda, pulo, laser, explosão, power-up, sirene, magia, chuva...), variações, "surpresa" e mais de 20 parâmetros
 - **Exportação** MP3, WAV, M4A (AAC) e OGG (Opus); projetos `.psom`
-- **IA**: com o Piphin LLM, a IA compõe (faixas, acordes, batidas, notas), ajusta a mixagem, cria efeitos sonoros e exporta
+- **IA**: com o Arasaka Mikoshi, a IA compõe (faixas, acordes, batidas, notas), ajusta a mixagem, cria efeitos sonoros e exporta
 
 ## Mídia do Hub
-Com o Piphin Hub 1.7.0 ou mais novo:
-- Músicas exportadas e efeitos sonoros entram na **Mídia** do Hub; o Piphin Vídeo usa direto.
+Com a Arasaka Central 1.7.0 ou mais novo:
+- Músicas exportadas e efeitos sonoros entram na **Mídia** do Hub; o Arasaka Braindance usa direto.
 - Em Efeitos sonoros, **Salvar na Mídia** guarda o efeito em Música\Piphin Som\efeitos sem perguntar onde.
-- **Importar da Mídia** (menu Arquivo ou na faixa de áudio): músicas baixadas no Piphin Música e áudios dos outros módulos.
-- **Abrir no Piphin Som** em outro módulo: o áudio entra na música aberta.
+- **Importar da Mídia** (menu Arquivo ou na faixa de áudio): músicas baixadas no Arasaka Radioport e áudios dos outros módulos.
+- **Abrir no Arasaka Synth** em outro módulo: o áudio entra na música aberta.
 
 ## Créditos
 
